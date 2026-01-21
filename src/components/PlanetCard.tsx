@@ -132,15 +132,6 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
             </CardTitle>
           </div>
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onClone(planet)}
-              className="text-primary hover:text-primary hover:bg-primary/10"
-              title={t('clonePlanet')}
-            >
-              <Copy className="w-4 h-4" />
-            </Button>
             {canRemove && (
               <Button
                 variant="ghost"
@@ -151,6 +142,15 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
                 <Trash2 className="w-4 h-4" />
               </Button>
             )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onClone(planet)}
+              className="text-primary hover:text-primary hover:bg-primary/10"
+              title={t('clonePlanet')}
+            >
+              <Copy className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </CardHeader>
