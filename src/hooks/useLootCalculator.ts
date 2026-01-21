@@ -59,22 +59,14 @@ export const useLootCalculator = (planets: Planet[], universeSpeed: number): Loo
       
       totalAdjustedPioneerBonus += adjustedPioneerBonus;
       totalAdjustedResearchBonus += adjustedResearchBonus;
-
-      // 3. Výpočet bonusu planety
-      // Postupná aplikace bonusů dle požadavku:
-      // 1. Nejdřív spočítat navýšení z pioneer bonusu
-      // 2. Z tohoto výsledku spočítat ostatní výzkumy
-      const metalAfterPioneer = rawBaseMetal * (1 + adjustedPioneerBonus);
-      const pioneerBonusAmount = metalAfterPioneer - rawBaseMetal;
-      const researchBonusAmount = metalAfterPioneer * adjustedResearchBonus;
-      
-      // Přičítáme pouze BONUS k celkovému impériu
-      const planetBonusMetal = pioneerBonusAmount + researchBonusAmount;
-
-
-      totalMetal += planetBonusMetal;
     });
 
+    // 3. Výpočet celkového kovu za impérium
+    // Postupná aplikace celkových bonusů:
+    // 1. Nejdřív navýšit základ o součet všech upravených pioneer bonusů
+    const metalAfterPioneer = rawBaseMetal * (1 + totalAdjustedPioneerBonus);
+    // 2. Z tohoto výsledku spočítat navýšení o součet všech upravených výzkumných bonusů
+    totalMetal = metalAfterPioneer * (1 + totalAdjustedResearchBonus);
 
     totalCrystal = (totalMetal / 2);
     totalDeuterium = totalMetal / 3;
