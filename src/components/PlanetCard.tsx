@@ -5,10 +5,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { 
-  Globe, Trash2, Rocket, Gauge, Shield, Ship, 
-  Copy, Building2, FlaskConical, Cpu, Zap, Factory,
-  Eye, Brain, Sparkles
+  Globe, Trash2, Copy, Building2, FlaskConical, Zap, Factory,
+  Eye, Brain, Sparkles, Landmark
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getRaceName, getRaceBonusType } from '@/lib/translations';
 
 interface PlanetCardProps {
   planet: Planet;
@@ -19,13 +20,21 @@ interface PlanetCardProps {
 }
 
 export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: PlanetCardProps) => {
+  const { t, language } = useLanguage();
+  
   const handleChange = (field: keyof Planet, value: string | number) => {
     onUpdate({ ...planet, [field]: value });
   };
 
-  const handleNumberChange = (field: keyof Planet, value: string) => {
+  const handleNumberChange = (field: keyof Planet, value: string, min: number = 0, max: number = Infinity) => {
     const num = parseInt(value) || 0;
-    handleChange(field, Math.max(0, num));
+    handleChange(field, Math.min(max, Math.max(min, num)));
+  };
+
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value === '0') {
+      e.target.select();
+    }
   };
 
   const renderRaceBuildings = () => {
@@ -34,14 +43,15 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
         return (
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-chart-1" />
-              Metropolis
+              <Landmark className="w-4 h-4 text-chart-1" />
+              {t('metropolis')}
             </Label>
             <Input
               type="number"
               min={0}
               value={planet.metropolis}
               onChange={(e) => handleNumberChange('metropolis', e.target.value)}
+              onFocus={handleFocus}
               className="bg-input border-border"
             />
           </div>
@@ -51,13 +61,14 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground flex items-center gap-2">
               <FlaskConical className="w-4 h-4 text-chart-5" />
-              Klonovací laboratoř
+              {t('cloningLab')}
             </Label>
             <Input
               type="number"
               min={0}
               value={planet.cloningLab}
               onChange={(e) => handleNumberChange('cloningLab', e.target.value)}
+              onFocus={handleFocus}
               className="bg-input border-border"
             />
           </div>
@@ -68,26 +79,28 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
             <div className="space-y-2">
               <Label className="text-sm text-muted-foreground flex items-center gap-2">
                 <Zap className="w-4 h-4 text-accent" />
-                Vysoce výkonný transformátor
+                {t('highPerformanceTransformer')}
               </Label>
               <Input
                 type="number"
                 min={0}
                 value={planet.highPerformanceTransformer}
                 onChange={(e) => handleNumberChange('highPerformanceTransformer', e.target.value)}
+                onFocus={handleFocus}
                 className="bg-input border-border"
               />
             </div>
             <div className="space-y-2">
               <Label className="text-sm text-muted-foreground flex items-center gap-2">
                 <Factory className="w-4 h-4 text-secondary" />
-                Hromadná produkce čipů
+                {t('massChipProduction')}
               </Label>
               <Input
                 type="number"
                 min={0}
                 value={planet.massChipProduction}
                 onChange={(e) => handleNumberChange('massChipProduction', e.target.value)}
+                onFocus={handleFocus}
                 className="bg-input border-border"
               />
             </div>
@@ -112,8 +125,9 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
               <Input
                 value={planet.name}
                 onChange={(e) => handleChange('name', e.target.value)}
+                onFocus={(e) => e.target.select()}
                 className="bg-transparent border-none p-0 h-auto text-xl font-bold focus-visible:ring-0 focus-visible:ring-offset-0"
-                placeholder="Název planety"
+                placeholder={t('planetNamePlaceholder')}
               />
             </CardTitle>
           </div>
@@ -123,7 +137,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
               size="icon"
               onClick={() => onClone(planet)}
               className="text-primary hover:text-primary hover:bg-primary/10"
-              title="Klonovat planetu"
+              title={t('clonePlanet')}
             >
               <Copy className="w-4 h-4" />
             </Button>
@@ -144,7 +158,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
       <CardContent className="relative space-y-4">
         {/* Race Selection */}
         <div className="space-y-2">
-          <Label className="text-sm text-muted-foreground">Rasa</Label>
+          <Label className="text-sm text-muted-foreground">{t('race')}</Label>
           <Select value={planet.race} onValueChange={(value: Race) => handleChange('race', value)}>
             <SelectTrigger className="bg-input border-border">
               <SelectValue />
@@ -153,8 +167,8 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
               {RACES.map((race) => (
                 <SelectItem key={race.id} value={race.id}>
                   <span className="flex items-center gap-2">
-                    <span>{race.name}</span>
-                    <span className="text-xs text-muted-foreground">({race.bonusType})</span>
+                    <span>{getRaceName(language, race.id)}</span>
+                    <span className="text-xs text-muted-foreground">({getRaceBonusType(language, race.id)})</span>
                   </span>
                 </SelectItem>
               ))}
@@ -162,88 +176,37 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
           </Select>
         </div>
 
-        {/* Base Technologies */}
+        {/* Race Level */}
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <Cpu className="w-4 h-4" />
-            Základní technologie
-          </h4>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground flex items-center gap-2">
-                <Rocket className="w-3 h-3 text-primary" />
-                Hyperspace Tech
-              </Label>
-              <Input
-                type="number"
-                min={0}
-                value={planet.hyperspaceTech}
-                onChange={(e) => handleNumberChange('hyperspaceTech', e.target.value)}
-                className="bg-input border-border"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground flex items-center gap-2">
-                <Gauge className="w-3 h-3 text-secondary" />
-                Explorer Class
-              </Label>
-              <Input
-                type="number"
-                min={0}
-                value={planet.explorerClass}
-                onChange={(e) => handleNumberChange('explorerClass', e.target.value)}
-                className="bg-input border-border"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground flex items-center gap-2">
-                <Shield className="w-3 h-3 text-accent" />
-                Fleet Admiral
-              </Label>
-              <Input
-                type="number"
-                min={0}
-                value={planet.fleetAdmiralLevel}
-                onChange={(e) => handleNumberChange('fleetAdmiralLevel', e.target.value)}
-                className="bg-input border-border"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground flex items-center gap-2">
-                <Ship className="w-3 h-3 resource-crystal" />
-                Pathfinders
-              </Label>
-              <Input
-                type="number"
-                min={0}
-                value={planet.pathfinders}
-                onChange={(e) => handleNumberChange('pathfinders', e.target.value)}
-                className="bg-input border-border"
-              />
-            </div>
-          </div>
+          <Label className="text-sm text-muted-foreground">{t('raceLevel')} (1-100)</Label>
+          <Input
+            type="text"
+            value={planet.raceLevel}
+            onChange={(e) => handleNumberChange('raceLevel', e.target.value, 1, 100)}
+            onFocus={handleFocus}
+            className="bg-input border-border"
+          />
         </div>
+
 
         {/* Research Technologies */}
         <div className="space-y-2">
           <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
             <FlaskConical className="w-4 h-4" />
-            Výzkumné technologie
+            {t('researchTechnologies')}
           </h4>
           <div className="grid grid-cols-1 gap-3">
             <div className="space-y-2">
               <Label className="text-xs text-muted-foreground flex items-center gap-2">
                 <Eye className="w-3 h-3 text-chart-1" />
-                Vylepšená senzorová technologie
+                {t('improvedSensorTech')}
               </Label>
               <Input
                 type="number"
                 min={0}
                 value={planet.improvedSensorTech}
                 onChange={(e) => handleNumberChange('improvedSensorTech', e.target.value)}
+                onFocus={handleFocus}
                 className="bg-input border-border"
               />
             </div>
@@ -251,13 +214,14 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
             <div className="space-y-2">
               <Label className="text-xs text-muted-foreground flex items-center gap-2">
                 <Brain className="w-3 h-3 text-chart-2" />
-                Šestý smysl
+                {t('sixthSense')}
               </Label>
               <Input
                 type="number"
                 min={0}
                 value={planet.sixthSense}
                 onChange={(e) => handleNumberChange('sixthSense', e.target.value)}
+                onFocus={handleFocus}
                 className="bg-input border-border"
               />
             </div>
@@ -265,13 +229,14 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
             <div className="space-y-2">
               <Label className="text-xs text-muted-foreground flex items-center gap-2">
                 <Sparkles className="w-3 h-3 text-chart-5" />
-                Kaeleshské vylepšení průkopníka
+                {t('kaeleshPioneerUpgrade')}
               </Label>
               <Input
                 type="number"
                 min={0}
                 value={planet.kaeleshPioneerUpgrade}
                 onChange={(e) => handleNumberChange('kaeleshPioneerUpgrade', e.target.value)}
+                onFocus={handleFocus}
                 className="bg-input border-border"
               />
             </div>
@@ -283,7 +248,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
           <div className="space-y-2">
             <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Building2 className="w-4 h-4" />
-              Budovy ({RACES.find(r => r.id === planet.race)?.name})
+              {t('buildings')} ({getRaceName(language, planet.race)})
             </h4>
             <div className="grid grid-cols-1 gap-3">
               {renderRaceBuildings()}

@@ -12,11 +12,6 @@ export interface Planet {
   id: string;
   name: string;
   race: Race;
-  // Common technologies
-  hyperspaceTech: number;
-  explorerClass: number;
-  fleetAdmiralLevel: number;
-  pathfinders: number;
   // Research technologies (all races)
   improvedSensorTech: number;
   sixthSense: number;
@@ -26,6 +21,7 @@ export interface Planet {
   cloningLab: number; // Kaelesh only
   highPerformanceTransformer: number; // Mechas only
   massChipProduction: number; // Mechas only
+  raceLevel: number;
 }
 
 export interface LootResult {
@@ -49,21 +45,21 @@ export const RACES: RaceInfo[] = [
     name: "Rock'tal",
     description: 'Mining specialists',
     bonusType: 'Těžební bonus',
-    baseBonus: 0.1,
+    baseBonus: 0,
   },
   {
     id: 'mechas',
     name: 'Mechas',
     description: 'Production specialists',
     bonusType: 'Produkční bonus',
-    baseBonus: 0.1,
+    baseBonus: 0,
   },
   {
     id: 'kaelesh',
     name: 'Kaelesh',
     description: 'Expedition specialists',
     bonusType: 'Expediční bonus',
-    baseBonus: 0.1,
+    baseBonus: 0,
   },
 ];
 
@@ -71,14 +67,10 @@ export const getRaceById = (id: Race): RaceInfo => {
   return RACES.find(r => r.id === id) || RACES[0];
 };
 
-export const createDefaultPlanet = (index: number): Planet => ({
+export const createDefaultPlanet = (index: number, planetName?: string): Planet => ({
   id: crypto.randomUUID(),
-  name: `Planeta ${index}`,
+  name: planetName || `Planet ${index}`,
   race: 'humans',
-  hyperspaceTech: 0,
-  explorerClass: 0,
-  fleetAdmiralLevel: 0,
-  pathfinders: 0,
   improvedSensorTech: 0,
   sixthSense: 0,
   kaeleshPioneerUpgrade: 0,
@@ -86,10 +78,11 @@ export const createDefaultPlanet = (index: number): Planet => ({
   cloningLab: 0,
   highPerformanceTransformer: 0,
   massChipProduction: 0,
+  raceLevel: 1,
 });
 
 export const clonePlanet = (planet: Planet, newIndex: number): Planet => ({
   ...planet,
   id: crypto.randomUUID(),
-  name: `${planet.name} (kopie)`,
+  name: `Planet ${newIndex}`,
 });

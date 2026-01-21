@@ -86,7 +86,7 @@ export default {
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		},
 		fontFamily: {
-			sans: ['Exo 2', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+			sans: ['Orbitron', 'ui-sans-serif', 'system-ui', 'sans-serif'],
 			display: ['Orbitron', 'ui-sans-serif', 'system-ui', 'sans-serif'],
 			mono: ['Space Mono', 'ui-monospace', 'monospace']
 		},
