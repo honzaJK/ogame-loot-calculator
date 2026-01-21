@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: "https://honzajk.github.io/ogame-loot-calculator",
+  base: "/ogame-loot-calculator/",
   build: {
     outDir: "docs"
   }
