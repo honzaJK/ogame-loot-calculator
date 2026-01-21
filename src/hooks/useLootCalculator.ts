@@ -71,26 +71,10 @@ export const useLootCalculator = (planets: Planet[], universeSpeed: number): Loo
       // Přičítáme pouze BONUS k celkovému impériu
       const planetBonusMetal = pioneerBonusAmount + researchBonusAmount;
 
-      console.log(`--- Planet: ${planet.name} (${planet.race}) ---`);
-      console.log(`  Raw Base Metal: ${rawBaseMetal.toLocaleString()}`);
-      console.log(`  Pioneer Bonus (Base): ${(pioneerBonus * 100).toFixed(6)}%`);
-      console.log(`  Research Bonus (Base): ${(researchBonus * 100).toFixed(6)}%`);
-      console.log(`  Building Efficiency: ${buildingEfficiency.toFixed(8)}x`);
-      console.log(`  Race Level Multiplier: ${raceLevelMultiplier.toFixed(8)}x`);
-      console.log(`  Race Bonus Multiplier: ${raceBonusMultiplier.toFixed(8)}x`);
-      console.log(`  Adjusted Pioneer Bonus: ${(adjustedPioneerBonus * 100).toFixed(6)}%`);
-      console.log(`  Adjusted Research Bonus: ${(adjustedResearchBonus * 100).toFixed(6)}%`);
-      console.log(`  Pioneer Bonus Amount: ${pioneerBonusAmount.toLocaleString()}`);
-      console.log(`  Research Bonus Amount: ${researchBonusAmount.toLocaleString()}`);
-      console.log(`  Total Planet Bonus Metal: ${planetBonusMetal.toLocaleString()}`);
 
       totalMetal += planetBonusMetal;
     });
 
-    console.log(`=== Empire Stats ===`);
-    console.log(`  Total Pioneer % Bonus: ${(totalAdjustedPioneerBonus * 100).toFixed(6)}%`);
-    console.log(`  Total Research % Bonus: ${(totalAdjustedResearchBonus * 100).toFixed(6)}%`);
-    console.log(`  Final Empire Metal: ${totalMetal.toLocaleString()}`);
 
     totalCrystal = (totalMetal / 2);
     totalDeuterium = totalMetal / 3;
