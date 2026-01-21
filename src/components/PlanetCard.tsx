@@ -31,8 +31,11 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
     handleChange(field, Math.min(max, Math.max(min, num)));
   };
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (e.target.value === '0') {
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>, field?: keyof Planet) => {
+    const defaultValue = field === 'raceLevel' ? '1' : '0';
+    if (e.target.value === defaultValue) {
+      handleChange(field || 'name', '');
+    } else {
       e.target.select();
     }
   };
@@ -51,7 +54,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
               min={0}
               value={planet.metropolis}
               onChange={(e) => handleNumberChange('metropolis', e.target.value)}
-              onFocus={handleFocus}
+              onFocus={(e) => handleFocus(e, 'metropolis')}
               className="bg-input border-border"
             />
           </div>
@@ -68,7 +71,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
               min={0}
               value={planet.cloningLab}
               onChange={(e) => handleNumberChange('cloningLab', e.target.value)}
-              onFocus={handleFocus}
+              onFocus={(e) => handleFocus(e, 'cloningLab')}
               className="bg-input border-border"
             />
           </div>
@@ -86,7 +89,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
                 min={0}
                 value={planet.highPerformanceTransformer}
                 onChange={(e) => handleNumberChange('highPerformanceTransformer', e.target.value)}
-                onFocus={handleFocus}
+                onFocus={(e) => handleFocus(e, 'highPerformanceTransformer')}
                 className="bg-input border-border"
               />
             </div>
@@ -100,7 +103,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
                 min={0}
                 value={planet.massChipProduction}
                 onChange={(e) => handleNumberChange('massChipProduction', e.target.value)}
-                onFocus={handleFocus}
+                onFocus={(e) => handleFocus(e, 'massChipProduction')}
                 className="bg-input border-border"
               />
             </div>
@@ -183,7 +186,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
             type="text"
             value={planet.raceLevel}
             onChange={(e) => handleNumberChange('raceLevel', e.target.value, 1, 100)}
-            onFocus={handleFocus}
+            onFocus={(e) => handleFocus(e, 'raceLevel')}
             className="bg-input border-border"
           />
         </div>
@@ -206,7 +209,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
                 min={0}
                 value={planet.improvedSensorTech}
                 onChange={(e) => handleNumberChange('improvedSensorTech', e.target.value)}
-                onFocus={handleFocus}
+                onFocus={(e) => handleFocus(e, 'improvedSensorTech')}
                 className="bg-input border-border"
               />
             </div>
@@ -221,7 +224,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
                 min={0}
                 value={planet.sixthSense}
                 onChange={(e) => handleNumberChange('sixthSense', e.target.value)}
-                onFocus={handleFocus}
+                onFocus={(e) => handleFocus(e, 'sixthSense')}
                 className="bg-input border-border"
               />
             </div>
@@ -236,7 +239,7 @@ export const PlanetCard = ({ planet, onUpdate, onRemove, onClone, canRemove }: P
                 min={0}
                 value={planet.kaeleshPioneerUpgrade}
                 onChange={(e) => handleNumberChange('kaeleshPioneerUpgrade', e.target.value)}
-                onFocus={handleFocus}
+                onFocus={(e) => handleFocus(e, 'kaeleshPioneerUpgrade')}
                 className="bg-input border-border"
               />
             </div>
