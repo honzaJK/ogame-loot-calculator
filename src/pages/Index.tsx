@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Planet, createDefaultPlanet, clonePlanet } from '@/types/ogame';
 import { StarField } from '@/components/StarField';
 import { Header } from '@/components/Header';
@@ -14,28 +14,45 @@ import { Language, translations } from '@/lib/translations';
 
 const IndexContent = () => {
   const { t, language, setLanguage } = useLanguage();
-  const [planets, setPlanets] = useState<Planet[]>([createDefaultPlanet(1)]);
-  const [planetCounter, setPlanetCounter] = useState(2);
+  const [planets, setPlanets] = useState<Planet[]>([]);
   const [universeSpeed, setUniverseSpeed] = useState<number>(1);
   const loot = useLootCalculator(planets, universeSpeed);
+
+  useEffect(() => {
+    if (planets.length === 0) {
+      setPlanets([createDefaultPlanet(1, `${t('planet')} 1`)]);
+    }
+  }, [t, planets.length]);
   
   const addPlanet = () => {
-    setPlanets([...planets, createDefaultPlanet(planetCounter)]);
-    setPlanetCounter(prev => prev + 1);
+    const newPlanets = [...planets, createDefaultPlanet(planets.length + 1, `${t('planet')} ${planets.length + 1}`)];
+    setPlanets(newPlanets);
   };
 
   const updatePlanet = (updatedPlanet: Planet) => {
     setPlanets(planets.map(p => p.id === updatedPlanet.id ? updatedPlanet : p));
   };
 
+  const renamePlanets = (currentPlanets: Planet[]) => {
+    return currentPlanets.map((p, index) => {
+      // Regexp to check if the name matches "Planet X" or "Planeta X" or "Planet X" in German
+      const planetNameMatch = p.name.match(/^(Planet|Planeta)\s+\d+$/i);
+      if (planetNameMatch) {
+        return { ...p, name: `${t('planet')} ${index + 1}` };
+      }
+      return p;
+    });
+  };
+
   const removePlanet = (id: string) => {
-    setPlanets(planets.filter(p => p.id !== id));
+    const filteredPlanets = planets.filter(p => p.id !== id);
+    setPlanets(renamePlanets(filteredPlanets));
   };
 
   const handleClonePlanet = (planet: Planet) => {
-    const cloned = clonePlanet(planet, planetCounter);
-    setPlanets([...planets, cloned]);
-    setPlanetCounter(prev => prev + 1);
+    const cloned = clonePlanet(planet, planets.length + 1);
+    const newCloned = { ...cloned, name: `${t('planet')} ${planets.length + 1}` };
+    setPlanets([...planets, newCloned]);
   };
 
   return (
