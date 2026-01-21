@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Planet } from '@/types/ogame';
+import { Planet, createDefaultPlanet, clonePlanet } from '@/types/ogame';
 import { StarField } from '@/components/StarField';
 import { Header } from '@/components/Header';
 import { PlanetCard } from '@/components/PlanetCard';
@@ -8,22 +8,14 @@ import { useLootCalculator } from '@/hooks/useLootCalculator';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 
-const createNewPlanet = (index: number): Planet => ({
-  id: crypto.randomUUID(),
-  name: `Planeta ${index}`,
-  race: 'humans',
-  hyperspaceTech: 0,
-  explorerClass: 0,
-  fleetAdmiralLevel: 0,
-  pathfinders: 0,
-});
-
 const Index = () => {
-  const [planets, setPlanets] = useState<Planet[]>([createNewPlanet(1)]);
+  const [planets, setPlanets] = useState<Planet[]>([createDefaultPlanet(1)]);
+  const [planetCounter, setPlanetCounter] = useState(2);
   const loot = useLootCalculator(planets);
 
   const addPlanet = () => {
-    setPlanets([...planets, createNewPlanet(planets.length + 1)]);
+    setPlanets([...planets, createDefaultPlanet(planetCounter)]);
+    setPlanetCounter(prev => prev + 1);
   };
 
   const updatePlanet = (updatedPlanet: Planet) => {
@@ -32,6 +24,12 @@ const Index = () => {
 
   const removePlanet = (id: string) => {
     setPlanets(planets.filter(p => p.id !== id));
+  };
+
+  const handleClonePlanet = (planet: Planet) => {
+    const cloned = clonePlanet(planet, planetCounter);
+    setPlanets([...planets, cloned]);
+    setPlanetCounter(prev => prev + 1);
   };
 
   return (
@@ -65,6 +63,7 @@ const Index = () => {
               planet={planet}
               onUpdate={updatePlanet}
               onRemove={removePlanet}
+              onClone={handleClonePlanet}
               canRemove={planets.length > 1}
             />
           ))}
